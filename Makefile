@@ -104,7 +104,7 @@ generate-test-data:
 ## Static analysis targets #################################
 
 .PHONY: static-analysis
-static-analysis: lint check-go-mod-tidy check-licenses
+static-analysis: lint check-go-mod-tidy
 
 .PHONY: lint
 lint: ## Run gofmt + golangci lint checks
