@@ -1,6 +1,6 @@
 module github.com/khulnasoft/inspo
 
-go 1.23.0
+go 1.23
 
 require (
 	github.com/awesome-gocui/gocui v1.1.0
