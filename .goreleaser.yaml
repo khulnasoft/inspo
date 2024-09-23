@@ -1,10 +1,5 @@
 release:
-  # If set to auto, will mark the release as not ready for production in case there is an indicator for this in the
-  # tag e.g. v1.0.0-rc1 .If set to true, will mark the release as not ready for production.
-  prerelease: auto
-
-  # If set to true, will not auto-publish the release. This is done to allow us to review the changelog before publishing.
-  draft: false
+  prerelease: true
 
 builds:
   - binary: inspo
@@ -16,16 +11,14 @@ builds:
       - linux
     goarch:
       - amd64
-      - arm64
     ldflags: -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.buildTime={{.Date}}`.
 
 brews:
-  - repository:
+  - github:
       owner: khulnasoft
       name: homebrew-inspo
-      token: "{{.Env.TAP_GITHUB_TOKEN}}"
     homepage: "https://github.com/khulnasoft/inspo/"
-    description: "A tool for exploring layers in a docker image"
+    description: "A tool for exploring each layer in a docker image"
 
 archives:
   - format: tar.gz
@@ -35,16 +28,15 @@ archives:
 
 nfpms:
   - license: MIT
-    maintainer: KhulnaSoft Ltd
+    maintainer: Alex Goodman
     homepage: https://github.com/khulnasoft/inspo/
-    description: "A tool for exploring layers in a docker image"
     formats:
       - rpm
       - deb
 
 dockers:
   -
-    ids:
+    binaries:
       - inspo
     dockerfile: Dockerfile
     # todo: on 1.0 remove 'v' prefix
