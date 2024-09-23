@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - develop
+      - update-docker-deps
   pull_request:
 
 jobs:
