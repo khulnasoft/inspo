@@ -194,7 +194,8 @@ func TestRun(t *testing.T) {
 				{stdout: "  efficiency: 99.9995 %", stderr: "", errorOnExit: false, errMessage: ""},
 				{stdout: "  wastedBytes: 35 bytes (35 B)", stderr: "", errorOnExit: false, errMessage: ""},
 				{stdout: "  userWastedPercent: 1.5514 %", stderr: "", errorOnExit: false, errMessage: ""},
-				{stdout: "Inefficient Files:\nCount  Wasted Space  File Path\n    2          14 B  /root/saved.txt\n    2          14 B  /root/example/somefile1.txt\n    2           7 B  /root/example/somefile3.txt\nResults:\n  FAIL: highestUserWastedPercent: too many bytes wasted, relative to the user bytes added (%-user-wasted-bytes=0.4834911001404049 > threshold=0.1)\n  FAIL: highestWastedBytes: too many bytes wasted (wasted-bytes=32025 > threshold=1000)\n  PASS: lowestEfficiency\nResult:FAIL [Total:3] [Passed:1] [Failed:2] [Warn:0] [Skipped:0]\n", stderr: "", errorOnExit: false, errMessage: ""},
+				{stdout: "Inefficient Files:\nCount  Wasted Space  File Path\n    2         13 kB  /root/saved.txt\n    2         13 kB  /root/example/somefile1.txt\n    2        6.4 kB  /root/example/somefile3.txt\nResults:\n  FAIL: highestUserWastedPercent: too many bytes wasted, relative to the user bytes added (%-user-wasted-bytes=0.4834911001404049 > threshold=0.1)\n  FAIL: highestWastedBytes: too many bytes wasted (wasted-bytes=32025 > threshold=1000)\n  PASS: lowestEfficiency\nResult:FAIL [Total:3] [Passed:1] [Failed:2] [Warn:0] [Skipped:0]\n", stderr: "", errorOnExit: false, errMessage: ""},
+				{stdout: "", stderr: "", errorOnExit: true, errMessage: ""},
 			},
 		},
 		"empty-ci-config-case": {
