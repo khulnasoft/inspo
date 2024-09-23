@@ -134,6 +134,10 @@ lint-fix: format  ## Auto-format all source code + run golangci lint fixers
 	$(call title,Running lint fixers)
 	$(LINT_CMD) --fix
 
+.PHONY: check-licenses
+check-licenses:
+	$(TEMP_DIR)/golicenses check ./...
+
 check-go-mod-tidy:
 	@ .github/scripts/go-mod-tidy-check.sh && echo "go.mod and go.sum are tidy!"
 
