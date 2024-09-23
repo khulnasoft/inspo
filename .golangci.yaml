@@ -1,71 +1,74 @@
-# Issues about docstring comments will be covered once we have enough coverage
-# TODO: enable when we have coverage for docstring comments
-# issues:
-#   # The list of ids of default excludes to include or disable.
-#   include:
-#     - EXC0002 # enable comments checks from golint
+# TODO: enable this when we have coverage on docstring comments
+#issues:
+#  # The list of ids of default excludes to include or disable.
+#  include:
+#    - EXC0002 # disable excluding of issues about comments from golint
 
 linters-settings:
   funlen:
-    # Set the maximum number of lines in a function (default: 60)
-    # TODO: reduce over time to improve function readability
+    # Checks the number of lines in a function.
+    # If lower than 0, disable the check.
+    # Default: 60
+    # TODO: drop this down over time...
     lines: 110
-    # Set the maximum number of statements in a function (default: 40)
+    # Checks the number of statements in a function.
+    # If lower than 0, disable the check.
+    # Default: 40
     statements: 60
-    
-# Default linters configuration: Add more over time as needed
-linters:
-  disable-all: true # Disable all linters to add them incrementally
-  enable:
-    - asciicheck
-#     - bodyclose
-#     - depguard
-#     - dogsled
-#     - dupl
-#     - errcheck
-#     - exportloopref
-#     - funlen
-#     - gocognit
-#     - goconst
-#     - gocritic
-#     - gocyclo
-#     - gofmt
-#     - goimports
-#     - goprintffuncname
-#     - gosec
-#     - gosimple
-#     - govet
-#     - ineffassign
-#     - misspell
-#     - nakedret
-#     - nolintlint
-#     - revive
-#     - staticcheck
-#     - stylecheck
-#     - typecheck
-#     - unconvert
-#     - unparam
-#     - unused
-#     - whitespace
 
-# Linters you should not enable at the moment
-# These linters are either deprecated, too aggressive, or cause false positives
-#   - gochecknoglobals
-#   - gochecknoinits   # too aggressive
-#   - godot            # inconsistent use of doc comments is not crucial yet
-#   - godox            # overly noisy for TODO comments
-#   - goerr113         # enforcing error wrapping isn't needed across the codebase
-#   - golint           # deprecated, consider revive or staticcheck instead
-#   - gomnd            # too aggressive regarding magic numbers
-#   - interfacer       # deprecated and prone to false positives
-#   - lll              # line length limit without per-line exceptions isn't feasible
-#   - maligned         # unnecessary optimization for your current context
-#   - nestif           # complex nested ifs are a low priority right now
-#   - prealloc         # could enforce unnecessary allocations and non-idiomatic code
-#   - scopelint        # deprecated
-#   - testpackage      # specific to test package structure
-#   - wsl              # noisy and lacks auto-fixer (https://github.com/bombsimon/wsl/issues/90)
-#   - varcheck         # deprecated, replaced by unused
-#   - deadcode         # deprecated, replaced by unused
-#   - structcheck      # deprecated, replaced by unused
-#   - rowserrcheck     # not applicable if sql.Rows isn't in use
+# TODO: use the default linters for now, but include these over time
+#linters:
+#  # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
+#  disable-all: true
+#  enable:
+#    - asciicheck
+#    - bodyclose
+#    - depguard
+#    - dogsled
+#    - dupl
+#    - errcheck
+#    - exportloopref
+#    - funlen
+#    - gocognit
+#    - goconst
+#    - gocritic
+#    - gocyclo
+#    - gofmt
+#    - goimports
+#    - goprintffuncname
+#    - gosec
+#    - gosimple
+#    - govet
+#    - ineffassign
+#    - misspell
+#    - nakedret
+#    - nolintlint
+#    - revive
+#    - staticcheck
+#    - stylecheck
+#    - typecheck
+#    - unconvert
+#    - unparam
+#    - unused
+#    - whitespace
+
+# do not enable...
+#    - gochecknoglobals
+#    - gochecknoinits    # this is too aggressive
+#    - godot
+#    - godox
+#    - goerr113
+#    - golint       # deprecated
+#    - gomnd        # this is too aggressive
+#    - interfacer   # this is a good idea, but is no longer supported and is prone to false positives
+#    - lll          # without a way to specify per-line exception cases, this is not usable
+#    - maligned     # this is an excellent linter, but tricky to optimize and we are not sensitive to memory layout optimizations
+#    - nestif
+#    - prealloc     # following this rule isn't consistently a good idea, as it sometimes forces unnecessary allocations that result in less idiomatic code
+#    - scopelint    # deprecated
+#    - testpackage
+#    - wsl          # this doens't have an auto-fixer yet and is pretty noisy (https://github.com/bombsimon/wsl/issues/90)
+#    - varcheck     # deprecated (since v1.49.0) due to: The owner seems to have abandoned the linter.  Replaced by unused.
+#    - deadcode     # deprecated (since v1.49.0) due to: The owner seems to have abandoned the linter.  Replaced by unused.
+#    - structcheck  # deprecated (since v1.49.0) due to: The owner seems to have abandoned the linter.  Replaced by unused.
+#    - rowserrcheck # we're not using sql.Rows at all in the codebase
