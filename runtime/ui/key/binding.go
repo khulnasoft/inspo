@@ -2,13 +2,11 @@ package key
 
 import (
 	"fmt"
-
-	"github.com/awesome-gocui/gocui"
-	"github.com/awesome-gocui/keybinding"
+	"github.com/jroimartin/gocui"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-
 	"github.com/khulnasoft/inspo/runtime/ui/format"
+	"github.com/khulnasoft-lab/keybinding"
 )
 
 type BindingInfo struct {
@@ -33,7 +31,7 @@ func GenerateBindings(gui *gocui.Gui, influence string, infos []BindingInfo) ([]
 		var err error
 		var binding *Binding
 
-		if len(info.ConfigKeys) > 0 {
+		if info.ConfigKeys != nil && len(info.ConfigKeys) > 0 {
 			binding, err = NewBindingFromConfig(gui, influence, info.ConfigKeys, info.Display, info.OnAction)
 		} else {
 			binding, err = NewBinding(gui, influence, info.Key, info.Modifier, info.Display, info.OnAction)
@@ -61,17 +59,10 @@ func NewBindingFromConfig(gui *gocui.Gui, influence string, configKeys []string,
 	var parsedKeys []keybinding.Key
 	for _, configKey := range configKeys {
 		bindStr := viper.GetString(configKey)
-		if bindStr == "" {
-			logrus.Debugf("skipping keybinding '%s' (no value given)", configKey)
-			continue
-		}
 		logrus.Debugf("parsing keybinding '%s' --> '%s'", configKey, bindStr)
 
 		keys, err := keybinding.ParseAll(bindStr)
-		if err != nil {
-			return nil, err
-		}
-		if len(keys) > 0 {
+		if err == nil && keys != nil && len(keys) > 0 {
 			parsedKeys = keys
 			break
 		}

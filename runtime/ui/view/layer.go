@@ -2,250 +2,266 @@ package view
 
 import (
 	"fmt"
-
-	"github.com/awesome-gocui/gocui"
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
-
 	"github.com/khulnasoft/inspo/inspo/image"
 	"github.com/khulnasoft/inspo/runtime/ui/format"
 	"github.com/khulnasoft/inspo/runtime/ui/key"
 	"github.com/khulnasoft/inspo/runtime/ui/viewmodel"
+	"strings"
+
+	"github.com/jroimartin/gocui"
+	"github.com/lunixbochs/vtclean"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
-// Layer holds the UI objects and data models for populating the lower-left pane.
-// Specifically the pane that shows the image layers and layer selector.
+type LayerChangeListener func(viewmodel.LayerSelection) error
+
+// Layer holds the UI objects and data models for populating the lower-left pane. Specifically the pane that
+// shows the image layers and layer selector.
 type Layer struct {
-	name                  string
-	gui                   *gocui.Gui
-	body                  *gocui.View
-	header                *gocui.View
-	vm                    *viewmodel.LayerSetState
-	constrainedRealEstate bool
+	name              string
+	gui               *gocui.Gui
+	view              *gocui.View
+	header            *gocui.View
+	LayerIndex        int
+	Layers            []*image.Layer
+	CompareMode       CompareType
+	CompareStartIndex int
 
 	listeners []LayerChangeListener
 
 	helpKeys []*key.Binding
 }
 
-// newLayerView creates a new view object attached the the global [gocui] screen object.
-func newLayerView(gui *gocui.Gui, layers []*image.Layer) (controller *Layer, err error) {
+// NewLayerView creates a new view object attached the the global [gocui] screen object.
+func NewLayerView(name string, gui *gocui.Gui, layers []*image.Layer) (controller *Layer, err error) {
 	controller = new(Layer)
 
 	controller.listeners = make([]LayerChangeListener, 0)
 
 	// populate main fields
-	controller.name = "layer"
+	controller.name = name
 	controller.gui = gui
-
-	var compareMode viewmodel.LayerCompareMode
+	controller.Layers = layers
 
 	switch mode := viper.GetBool("layer.show-aggregated-changes"); mode {
 	case true:
-		compareMode = viewmodel.CompareAllLayers
+		controller.CompareMode = CompareAll
 	case false:
-		compareMode = viewmodel.CompareSingleLayer
+		controller.CompareMode = CompareLayer
 	default:
 		return nil, fmt.Errorf("unknown layer.show-aggregated-changes value: %v", mode)
 	}
 
-	controller.vm = viewmodel.NewLayerSetState(layers, compareMode)
-
 	return controller, err
 }
 
-func (v *Layer) AddLayerChangeListener(listener ...LayerChangeListener) {
-	v.listeners = append(v.listeners, listener...)
+func (c *Layer) AddLayerChangeListener(listener ...LayerChangeListener) {
+	c.listeners = append(c.listeners, listener...)
 }
 
-func (v *Layer) notifyLayerChangeListeners() error {
-	bottomTreeStart, bottomTreeStop, topTreeStart, topTreeStop := v.vm.GetCompareIndexes()
+func (c *Layer) notifyLayerChangeListeners() error {
+	bottomTreeStart, bottomTreeStop, topTreeStart, topTreeStop := c.getCompareIndexes()
 	selection := viewmodel.LayerSelection{
-		Layer:           v.CurrentLayer(),
+		Layer:           c.CurrentLayer(),
 		BottomTreeStart: bottomTreeStart,
 		BottomTreeStop:  bottomTreeStop,
 		TopTreeStart:    topTreeStart,
 		TopTreeStop:     topTreeStop,
 	}
-	for _, listener := range v.listeners {
+	for _, listener := range c.listeners {
 		err := listener(selection)
 		if err != nil {
 			logrus.Errorf("notifyLayerChangeListeners error: %+v", err)
 			return err
 		}
 	}
-	// this is hacky, and I do not like it
-	if layerDetails, err := v.gui.View("layerDetails"); err == nil {
-		if err := layerDetails.SetCursor(0, 0); err != nil {
-			logrus.Debug("Couldn't set cursor to 0,0 for layerDetails")
-		}
-	}
 	return nil
 }
 
-func (v *Layer) Name() string {
-	return v.name
+func (c *Layer) Name() string {
+	return c.name
 }
 
 // Setup initializes the UI concerns within the context of a global [gocui] view object.
-func (v *Layer) Setup(body *gocui.View, header *gocui.View) error {
-	logrus.Tracef("view.Setup() %s", v.Name())
+func (c *Layer) Setup(v *gocui.View, header *gocui.View) error {
 
 	// set controller options
-	v.body = body
-	v.body.Editable = false
-	v.body.Wrap = false
-	v.body.Frame = false
+	c.view = v
+	c.view.Editable = false
+	c.view.Wrap = false
+	c.view.Frame = false
 
-	v.header = header
-	v.header.Editable = false
-	v.header.Wrap = false
-	v.header.Frame = false
+	c.header = header
+	c.header.Editable = false
+	c.header.Wrap = false
+	c.header.Frame = false
 
 	var infos = []key.BindingInfo{
 		{
 			ConfigKeys: []string{"keybinding.compare-layer"},
-			OnAction:   func() error { return v.setCompareMode(viewmodel.CompareSingleLayer) },
-			IsSelected: func() bool { return v.vm.CompareMode == viewmodel.CompareSingleLayer },
+			OnAction:   func() error { return c.setCompareMode(CompareLayer) },
+			IsSelected: func() bool { return c.CompareMode == CompareLayer },
 			Display:    "Show layer changes",
 		},
 		{
 			ConfigKeys: []string{"keybinding.compare-all"},
-			OnAction:   func() error { return v.setCompareMode(viewmodel.CompareAllLayers) },
-			IsSelected: func() bool { return v.vm.CompareMode == viewmodel.CompareAllLayers },
+			OnAction:   func() error { return c.setCompareMode(CompareAll) },
+			IsSelected: func() bool { return c.CompareMode == CompareAll },
 			Display:    "Show aggregated changes",
 		},
 		{
 			Key:      gocui.KeyArrowDown,
 			Modifier: gocui.ModNone,
-			OnAction: v.CursorDown,
+			OnAction: c.CursorDown,
 		},
 		{
 			Key:      gocui.KeyArrowUp,
 			Modifier: gocui.ModNone,
-			OnAction: v.CursorUp,
+			OnAction: c.CursorUp,
+		},
+		{
+			Key:      gocui.KeyArrowLeft,
+			Modifier: gocui.ModNone,
+			OnAction: c.CursorUp,
+		},
+		{
+			Key:      gocui.KeyArrowRight,
+			Modifier: gocui.ModNone,
+			OnAction: c.CursorDown,
 		},
 		{
 			ConfigKeys: []string{"keybinding.page-up"},
-			OnAction:   v.PageUp,
+			OnAction:   c.PageUp,
 		},
 		{
 			ConfigKeys: []string{"keybinding.page-down"},
-			OnAction:   v.PageDown,
+			OnAction:   c.PageDown,
 		},
 	}
 
-	helpKeys, err := key.GenerateBindings(v.gui, v.name, infos)
+	helpKeys, err := key.GenerateBindings(c.gui, c.name, infos)
 	if err != nil {
 		return err
 	}
-	v.helpKeys = helpKeys
+	c.helpKeys = helpKeys
 
-	return v.Render()
+	return c.Render()
 }
 
 // height obtains the height of the current pane (taking into account the lost space due to the header).
-func (v *Layer) height() uint {
-	_, height := v.body.Size()
+func (c *Layer) height() uint {
+	_, height := c.view.Size()
 	return uint(height - 1)
 }
 
-func (v *Layer) CompareMode() viewmodel.LayerCompareMode {
-	return v.vm.CompareMode
-}
-
 // IsVisible indicates if the layer view pane is currently initialized.
-func (v *Layer) IsVisible() bool {
-	return v != nil
+func (c *Layer) IsVisible() bool {
+	return c != nil
 }
 
 // PageDown moves to next page putting the cursor on top
-func (v *Layer) PageDown() error {
-	step := int(v.height()) + 1
-	targetLayerIndex := v.vm.LayerIndex + step
+func (c *Layer) PageDown() error {
+	step := int(c.height()) + 1
+	targetLayerIndex := c.LayerIndex + step
 
-	if targetLayerIndex > len(v.vm.Layers) {
-		step -= targetLayerIndex - (len(v.vm.Layers) - 1)
+	if targetLayerIndex > len(c.Layers) {
+		step -= targetLayerIndex - (len(c.Layers) - 1)
 	}
 
 	if step > 0 {
-		// err := CursorStep(v.gui, v.body, step)
-		err := error(nil)
+		err := CursorStep(c.gui, c.view, step)
 		if err == nil {
-			return v.SetCursor(v.vm.LayerIndex + step)
+			return c.SetCursor(c.LayerIndex + step)
 		}
 	}
 	return nil
 }
 
 // PageUp moves to previous page putting the cursor on top
-func (v *Layer) PageUp() error {
-	step := int(v.height()) + 1
-	targetLayerIndex := v.vm.LayerIndex - step
+func (c *Layer) PageUp() error {
+	step := int(c.height()) + 1
+	targetLayerIndex := c.LayerIndex - step
 
 	if targetLayerIndex < 0 {
 		step += targetLayerIndex
 	}
 
 	if step > 0 {
-		// err := CursorStep(v.gui, v.body, -step)
-		err := error(nil)
+		err := CursorStep(c.gui, c.view, -step)
 		if err == nil {
-			return v.SetCursor(v.vm.LayerIndex - step)
+			return c.SetCursor(c.LayerIndex - step)
 		}
 	}
 	return nil
 }
 
 // CursorDown moves the cursor down in the layer pane (selecting a higher layer).
-func (v *Layer) CursorDown() error {
-	if v.vm.LayerIndex < len(v.vm.Layers)-1 {
-		// err := CursorDown(v.gui, v.body)
-		err := error(nil)
+func (c *Layer) CursorDown() error {
+	if c.LayerIndex < len(c.Layers) {
+		err := CursorDown(c.gui, c.view)
 		if err == nil {
-			return v.SetCursor(v.vm.LayerIndex + 1)
+			return c.SetCursor(c.LayerIndex + 1)
 		}
 	}
 	return nil
 }
 
 // CursorUp moves the cursor up in the layer pane (selecting a lower layer).
-func (v *Layer) CursorUp() error {
-	if v.vm.LayerIndex > 0 {
-		// err := CursorUp(v.gui, v.body)
-		err := error(nil)
+func (c *Layer) CursorUp() error {
+	if c.LayerIndex > 0 {
+		err := CursorUp(c.gui, c.view)
 		if err == nil {
-			return v.SetCursor(v.vm.LayerIndex - 1)
+			return c.SetCursor(c.LayerIndex - 1)
 		}
 	}
 	return nil
 }
 
 // SetCursor resets the cursor and orients the file tree view based on the given layer index.
-func (v *Layer) SetCursor(layer int) error {
-	v.vm.LayerIndex = layer
-	err := v.notifyLayerChangeListeners()
+func (c *Layer) SetCursor(layer int) error {
+	c.LayerIndex = layer
+	err := c.notifyLayerChangeListeners()
 	if err != nil {
 		return err
 	}
 
-	return v.Render()
+	return c.Render()
 }
 
 // CurrentLayer returns the Layer object currently selected.
-func (v *Layer) CurrentLayer() *image.Layer {
-	return v.vm.Layers[v.vm.LayerIndex]
+func (c *Layer) CurrentLayer() *image.Layer {
+	return c.Layers[c.LayerIndex]
 }
 
 // setCompareMode switches the layer comparison between a single-layer comparison to an aggregated comparison.
-func (v *Layer) setCompareMode(compareMode viewmodel.LayerCompareMode) error {
-	v.vm.CompareMode = compareMode
-	return v.notifyLayerChangeListeners()
+func (c *Layer) setCompareMode(compareMode CompareType) error {
+	c.CompareMode = compareMode
+	return c.notifyLayerChangeListeners()
+}
+
+// getCompareIndexes determines the layer boundaries to use for comparison (based on the current compare mode)
+func (c *Layer) getCompareIndexes() (bottomTreeStart, bottomTreeStop, topTreeStart, topTreeStop int) {
+	bottomTreeStart = c.CompareStartIndex
+	topTreeStop = c.LayerIndex
+
+	if c.LayerIndex == c.CompareStartIndex {
+		bottomTreeStop = c.LayerIndex
+		topTreeStart = c.LayerIndex
+	} else if c.CompareMode == CompareLayer {
+		bottomTreeStop = c.LayerIndex - 1
+		topTreeStart = c.LayerIndex
+	} else {
+		bottomTreeStop = c.CompareStartIndex
+		topTreeStart = c.CompareStartIndex + 1
+	}
+
+	return bottomTreeStart, bottomTreeStop, topTreeStart, topTreeStop
 }
 
 // renderCompareBar returns the formatted string for the given layer.
-func (v *Layer) renderCompareBar(layerIdx int) string {
-	bottomTreeStart, bottomTreeStop, topTreeStart, topTreeStop := v.vm.GetCompareIndexes()
+func (c *Layer) renderCompareBar(layerIdx int) string {
+	bottomTreeStart, bottomTreeStop, topTreeStart, topTreeStop := c.getCompareIndexes()
 	result := "  "
 
 	if layerIdx >= bottomTreeStart && layerIdx <= bottomTreeStop {
@@ -258,101 +274,61 @@ func (v *Layer) renderCompareBar(layerIdx int) string {
 	return result
 }
 
-func (v *Layer) ConstrainLayout() {
-	if !v.constrainedRealEstate {
-		logrus.Debugf("constraining layer layout")
-		v.constrainedRealEstate = true
-	}
-}
-
-func (v *Layer) ExpandLayout() {
-	if v.constrainedRealEstate {
-		logrus.Debugf("expanding layer layout")
-		v.constrainedRealEstate = false
-	}
-}
-
-// OnLayoutChange is called whenever the screen dimensions are changed
-func (v *Layer) OnLayoutChange() error {
-	err := v.Update()
-	if err != nil {
-		return err
-	}
-	return v.Render()
-}
-
 // Update refreshes the state objects for future rendering (currently does nothing).
-func (v *Layer) Update() error {
+func (c *Layer) Update() error {
 	return nil
 }
 
 // Render flushes the state objects to the screen. The layers pane reports:
 // 1. the layers of the image + metadata
 // 2. the current selected image
-func (v *Layer) Render() error {
-	logrus.Tracef("view.Render() %s", v.Name())
+func (c *Layer) Render() error {
 
 	// indicate when selected
 	title := "Layers"
-	isSelected := v.gui.CurrentView() == v.body
+	if c.gui.CurrentView() == c.view {
+		title = "● " + title
+	}
 
-	v.gui.Update(func(g *gocui.Gui) error {
-		var err error
+	c.gui.Update(func(g *gocui.Gui) error {
 		// update header
-		v.header.Clear()
+		c.header.Clear()
 		width, _ := g.Size()
-		if v.constrainedRealEstate {
-			headerStr := format.RenderNoHeader(width, isSelected)
-			headerStr += "\nLayer"
-			_, err := fmt.Fprintln(v.header, headerStr)
-			if err != nil {
-				return err
-			}
-		} else {
-			headerStr := format.RenderHeader(title, width, isSelected)
-			headerStr += fmt.Sprintf("Cmp"+image.LayerFormat, "Size", "Command")
-			_, err := fmt.Fprintln(v.header, headerStr)
-			if err != nil {
-				return err
-			}
+		headerStr := fmt.Sprintf("[%s]%s\n", title, strings.Repeat("─", width*2))
+		headerStr += fmt.Sprintf("Cmp"+image.LayerFormat, "Size", "Command")
+		_, err := fmt.Fprintln(c.header, format.Header(vtclean.Clean(headerStr, false)))
+		if err != nil {
+			return err
 		}
 
 		// update contents
-		v.body.Clear()
-		for idx, layer := range v.vm.Layers {
-			var layerStr string
-			if v.constrainedRealEstate {
-				layerStr = fmt.Sprintf("%-4d", layer.Index)
-			} else {
-				layerStr = layer.String()
-			}
+		c.view.Clear()
+		for idx, layer := range c.Layers {
 
-			compareBar := v.renderCompareBar(idx)
+			layerStr := layer.String()
+			compareBar := c.renderCompareBar(idx)
 
-			if idx == v.vm.LayerIndex {
-				_, err = fmt.Fprintln(v.body, compareBar+" "+format.Selected(layerStr))
+			if idx == c.LayerIndex {
+				_, err = fmt.Fprintln(c.view, compareBar+" "+format.Selected(layerStr))
 			} else {
-				_, err = fmt.Fprintln(v.body, compareBar+" "+layerStr)
+				_, err = fmt.Fprintln(c.view, compareBar+" "+layerStr)
 			}
 
 			if err != nil {
 				logrus.Debug("unable to write to buffer: ", err)
 				return err
 			}
+
 		}
 		return nil
 	})
 	return nil
 }
 
-func (v *Layer) LayerCount() int {
-	return len(v.vm.Layers)
-}
-
 // KeyHelp indicates all the possible actions a user can take while the current pane is selected.
-func (v *Layer) KeyHelp() string {
+func (c *Layer) KeyHelp() string {
 	var help string
-	for _, binding := range v.helpKeys {
+	for _, binding := range c.helpKeys {
 		help += binding.RenderKeyHelp()
 	}
 	return help

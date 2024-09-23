@@ -1,10 +1,9 @@
 package docker
 
 import (
+	"github.com/khulnasoft/inspo/inspo/image"
 	"os"
 	"testing"
-
-	"github.com/khulnasoft/inspo/inspo/image"
 )
 
 func TestLoadArchive(tarPath string) (*ImageArchive, error) {

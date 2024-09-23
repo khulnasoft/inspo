@@ -1,11 +1,9 @@
 package export
 
 import (
-	"testing"
-
 	"github.com/sergi/go-diff/diffmatchpatch"
-
 	"github.com/khulnasoft/inspo/inspo/image/docker"
+	"testing"
 )
 
 func Test_Export(t *testing.T) {

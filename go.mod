@@ -6,7 +6,6 @@ require (
 	github.com/Azure/go-ansiterm v0.0.0-20170929234023-d6e3b3328b78 // indirect
 	github.com/Microsoft/go-winio v0.4.14 // indirect
 	github.com/awesome-gocui/gocui v1.1.0
-	github.com/awesome-gocui/keybinding v1.0.0
 	github.com/cespare/xxhash v1.1.0
 	github.com/docker/cli v0.0.0-20190906153656-016a3232168d
 	github.com/docker/distribution v2.7.1+incompatible // indirect
@@ -19,6 +18,8 @@ require (
 	github.com/google/go-cmp v0.3.0 // indirect
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/mux v1.7.2 // indirect
+	github.com/jroimartin/gocui v0.5.0
+	github.com/khulnasoft-lab/keybinding v0.0.0-20240923001745-82c2296eb5be
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/logrusorgru/aurora v0.0.0-20190803045625-94edacc10f9b
 	github.com/lunixbochs/vtclean v1.0.0
@@ -39,6 +40,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.4.0
 	github.com/stretchr/testify v1.4.0 // indirect
+	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
 	golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297
 	google.golang.org/genproto v0.0.0-20190620144150-6af8c5fc6601 // indirect
 	google.golang.org/grpc v1.21.1 // indirect

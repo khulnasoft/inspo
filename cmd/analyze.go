@@ -2,19 +2,17 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/khulnasoft/inspo/inspo"
 	"os"
 
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-
-	"github.com/khulnasoft/inspo/inspo"
 	"github.com/khulnasoft/inspo/runtime"
 )
 
 // doAnalyzeCmd takes a docker image tag, digest, or id and displays the
 // image analysis to the screen
 func doAnalyzeCmd(cmd *cobra.Command, args []string) {
+
 	if len(args) == 0 {
 		printVersionFlag, err := cmd.PersistentFlags().GetBool("version")
 		if err == nil && printVersionFlag {
@@ -47,27 +45,21 @@ func doAnalyzeCmd(cmd *cobra.Command, args []string) {
 	sourceType, imageStr = inspo.DeriveImageSource(userImage)
 
 	if sourceType == inspo.SourceUnknown {
-		sourceStr := viper.GetString("source")
-		sourceType = inspo.ParseImageSource(sourceStr)
-		if sourceType == inspo.SourceUnknown {
-			fmt.Printf("unable to determine image source: %v\n", sourceStr)
+		sourceStr, err := cmd.PersistentFlags().GetString("source")
+		if err != nil {
+			fmt.Printf("unable to determine image source: %v\n", err)
 			os.Exit(1)
 		}
 
+		sourceType = inspo.ParseImageSource(sourceStr)
 		imageStr = userImage
 	}
 
-	ignoreErrors, err := cmd.PersistentFlags().GetBool("ignore-errors")
-	if err != nil {
-		logrus.Error("unable to get 'ignore-errors' option:", err)
-	}
-
 	runtime.Run(runtime.Options{
-		Ci:           isCi,
-		Source:       sourceType,
-		Image:        imageStr,
-		ExportFile:   exportFile,
-		CiConfig:     ciConfig,
-		IgnoreErrors: viper.GetBool("ignore-errors") || ignoreErrors,
+		Ci:         isCi,
+		Source:     sourceType,
+		Image:      imageStr,
+		ExportFile: exportFile,
+		CiConfig:   ciConfig,
 	})
 }

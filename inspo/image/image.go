@@ -10,6 +10,7 @@ type Image struct {
 }
 
 func (img *Image) Analyze() (*AnalysisResult, error) {
+
 	efficiency, inefficiencies := filetree.Efficiency(img.Trees)
 	var sizeBytes, userSizeBytes uint64
 

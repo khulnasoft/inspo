@@ -2,16 +2,16 @@ package ci
 
 import (
 	"fmt"
+	"github.com/dustin/go-humanize"
+	"github.com/khulnasoft/inspo/inspo/image"
+	"github.com/khulnasoft/inspo/utils"
 	"sort"
 	"strconv"
 	"strings"
 
-	"github.com/dustin/go-humanize"
-	"github.com/logrusorgru/aurora"
 	"github.com/spf13/viper"
 
-	"github.com/khulnasoft/inspo/inspo/image"
-	"github.com/khulnasoft/inspo/utils"
+	"github.com/logrusorgru/aurora"
 )
 
 type CiEvaluator struct {
@@ -67,6 +67,7 @@ func (ci *CiEvaluator) Evaluate(analysis *image.AnalysisResult) bool {
 				message: "test",
 			}
 		}
+
 	}
 
 	if !canEvaluate {
@@ -110,6 +111,7 @@ func (ci *CiEvaluator) Evaluate(analysis *image.AnalysisResult) bool {
 			status:  status,
 			message: message,
 		}
+
 	}
 
 	ci.Tally.Total = len(ci.Results)
@@ -172,6 +174,7 @@ func (ci *CiEvaluator) Report() string {
 
 	if ci.Misconfigured {
 		fmt.Fprintln(&sb, aurora.Red("CI Misconfigured"))
+
 	} else {
 		summary := fmt.Sprintf("Result:%s [Total:%d] [Passed:%d] [Failed:%d] [Warn:%d] [Skipped:%d]", status, ci.Tally.Total, ci.Tally.Pass, ci.Tally.Fail, ci.Tally.Warn, ci.Tally.Skip)
 		if ci.Pass {

@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"io"
+	"github.com/khulnasoft/inspo/inspo"
+	"github.com/khulnasoft/inspo/inspo/filetree"
+	"io/ioutil"
 	"os"
 	"path"
 	"strings"
@@ -11,9 +13,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/khulnasoft/inspo/inspo"
-	"github.com/khulnasoft/inspo/inspo/filetree"
 )
 
 var cfgFile string
@@ -49,7 +48,6 @@ func initCli() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.inspo.yaml, ~/.config/inspo/*.yaml, or $XDG_CONFIG_HOME/inspo.yaml)")
 	rootCmd.PersistentFlags().String("source", "docker", "The container engine to fetch the image from. Allowed values: "+strings.Join(inspo.ImageSources, ", "))
 	rootCmd.PersistentFlags().BoolP("version", "v", false, "display version number")
-	rootCmd.PersistentFlags().BoolP("ignore-errors", "i", false, "ignore image parsing errors and run the analysis anyway")
 	rootCmd.Flags().BoolVar(&isCi, "ci", false, "Skip the interactive TUI and validate against CI rules (same as env var CI=true)")
 	rootCmd.Flags().StringVarP(&exportFile, "json", "j", "", "Skip the interactive TUI and write the layer analysis statistics to a given file.")
 	rootCmd.Flags().StringVar(&ciConfigFile, "ci-config", ".inspo-ci", "If CI=true in the environment, use the given yaml to drive validation rules.")
@@ -64,20 +62,18 @@ func initCli() {
 		}
 	}
 
-	if err := ciConfig.BindPFlag("ignore-errors", rootCmd.PersistentFlags().Lookup("ignore-errors")); err != nil {
-		log.Fatalf("Unable to bind 'ignore-errors' flag: %v", err)
-	}
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	var err error
+	filepathToCfg := getCfgFile(cfgFile)
+	viper.SetConfigFile(filepathToCfg)
 
 	viper.SetDefault("log.level", log.InfoLevel.String())
 	viper.SetDefault("log.path", "./inspo.log")
 	viper.SetDefault("log.enabled", false)
 	// keybindings: status view / global
-	viper.SetDefault("keybinding.quit", "ctrl+c,q")
+	viper.SetDefault("keybinding.quit", "ctrl+c")
 	viper.SetDefault("keybinding.toggle-view", "tab")
 	viper.SetDefault("keybinding.filter-files", "ctrl+f, ctrl+slash")
 	// keybindings: layer view
@@ -86,13 +82,11 @@ func initConfig() {
 	// keybindings: filetree view
 	viper.SetDefault("keybinding.toggle-collapse-dir", "space")
 	viper.SetDefault("keybinding.toggle-collapse-all-dir", "ctrl+space")
-	viper.SetDefault("keybinding.toggle-sort-order", "ctrl+o")
 	viper.SetDefault("keybinding.toggle-filetree-attributes", "ctrl+b")
 	viper.SetDefault("keybinding.toggle-added-files", "ctrl+a")
 	viper.SetDefault("keybinding.toggle-removed-files", "ctrl+r")
 	viper.SetDefault("keybinding.toggle-modified-files", "ctrl+m")
 	viper.SetDefault("keybinding.toggle-unmodified-files", "ctrl+u")
-	viper.SetDefault("keybinding.toggle-wrap-tree", "ctrl+p")
 	viper.SetDefault("keybinding.page-up", "pgup")
 	viper.SetDefault("keybinding.page-down", "pgdn")
 
@@ -105,33 +99,15 @@ func initConfig() {
 	viper.SetDefault("filetree.show-attributes", true)
 
 	viper.SetDefault("container-engine", "docker")
-	viper.SetDefault("ignore-errors", false)
-
-	err = viper.BindPFlag("source", rootCmd.PersistentFlags().Lookup("source"))
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
 
 	viper.SetEnvPrefix("INSPO")
 	// replace all - with _ when looking for matching environment variables
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	viper.AutomaticEnv()
 
-	// if config files are present, load them
-	if cfgFile == "" {
-		// default configs are ignored if not found
-		filepathToCfg := getDefaultCfgFile()
-		viper.SetConfigFile(filepathToCfg)
-	} else {
-		viper.SetConfigFile(cfgFile)
-	}
-	err = viper.ReadInConfig()
-	if err == nil {
+	// If a config file is found, read it in.
+	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
-	} else if cfgFile != "" {
-		fmt.Println(err)
-		os.Exit(0)
 	}
 
 	// set global defaults (for performance)
@@ -147,7 +123,7 @@ func initLogging() {
 		logFileObj, err = os.OpenFile(viper.GetString("log.path"), os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 		log.SetOutput(logFileObj)
 	} else {
-		log.SetOutput(io.Discard)
+		log.SetOutput(ioutil.Discard)
 	}
 
 	if err != nil {
@@ -164,17 +140,17 @@ func initLogging() {
 	}
 
 	log.SetLevel(level)
-	log.Debug("Starting Inspo...")
-	log.Debugf("config filepath: %s", viper.ConfigFileUsed())
-	for k, v := range viper.AllSettings() {
-		log.Debug("config value: ", k, " : ", v)
-	}
+	log.Debug("Starting Dive...")
 }
 
-// getDefaultCfgFile checks for config file in paths from xdg specs
+// getCfgFile checks for config file in paths from xdg specs
 // and in $HOME/.config/inspo/ directory
 // defaults to $HOME/.inspo.yaml
-func getDefaultCfgFile() string {
+func getCfgFile(fromFlag string) string {
+	if fromFlag != "" {
+		return fromFlag
+	}
+
 	home, err := homedir.Dir()
 	if err != nil {
 		fmt.Println(err)
@@ -199,14 +175,14 @@ func getDefaultCfgFile() string {
 // if not found returns empty string
 func findInPath(pathTo string) string {
 	directory := path.Join(pathTo, "inspo")
-	files, err := os.ReadDir(directory)
+	files, err := ioutil.ReadDir(directory)
 	if err != nil {
 		return ""
 	}
 
 	for _, file := range files {
 		filename := file.Name()
-		if path.Ext(filename) == ".yaml" || path.Ext(filename) == ".yml" {
+		if path.Ext(filename) == ".yaml" {
 			return path.Join(directory, filename)
 		}
 	}

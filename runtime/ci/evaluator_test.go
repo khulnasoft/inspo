@@ -1,12 +1,11 @@
 package ci
 
 import (
+	"github.com/khulnasoft/inspo/inspo/image/docker"
 	"strings"
 	"testing"
 
 	"github.com/spf13/viper"
-
-	"github.com/khulnasoft/inspo/inspo/image/docker"
 )
 
 func Test_Evaluator(t *testing.T) {

@@ -2,11 +2,10 @@ package filetree
 
 import (
 	"archive/tar"
-	"io"
-	"os"
-
 	"github.com/cespare/xxhash"
 	"github.com/sirupsen/logrus"
+	"io"
+	"os"
 )
 
 // FileInfo contains tar metadata for a specific FileNode
@@ -57,6 +56,7 @@ func NewFileInfo(realPath, path string, info os.FileInfo) FileInfo {
 		if err != nil {
 			logrus.Panic("unable to read link:", realPath, err)
 		}
+
 	} else if info.IsDir() {
 		fileType = tar.TypeDir
 	} else {

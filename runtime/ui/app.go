@@ -1,16 +1,16 @@
 package ui
 
 import (
-	"sync"
-
-	"github.com/awesome-gocui/gocui"
-	"github.com/sirupsen/logrus"
-
-	"github.com/khulnasoft/inspo/inspo/filetree"
+	"fmt"
 	"github.com/khulnasoft/inspo/inspo/image"
 	"github.com/khulnasoft/inspo/runtime/ui/key"
-	"github.com/khulnasoft/inspo/runtime/ui/layout"
-	"github.com/khulnasoft/inspo/runtime/ui/layout/compound"
+	"golang.org/x/crypto/ssh/terminal"
+	"os"
+	"sync"
+
+	"github.com/jroimartin/gocui"
+	"github.com/sirupsen/logrus"
+	"github.com/khulnasoft/inspo/inspo/filetree"
 )
 
 const debug = false
@@ -19,7 +19,7 @@ const debug = false
 type app struct {
 	gui         *gocui.Gui
 	controllers *Controller
-	layout      *layout.Manager
+	layout      *layoutManager
 }
 
 var (
@@ -27,31 +27,22 @@ var (
 	appSingleton *app
 )
 
-func newApp(gui *gocui.Gui, imageName string, analysis *image.AnalysisResult, cache filetree.Comparer) (*app, error) {
+func newApp(gui *gocui.Gui, analysis *image.AnalysisResult, cache filetree.Comparer) (*app, error) {
 	var err error
 	once.Do(func() {
-		var controller *Controller
+		var theControls *Controller
 		var globalHelpKeys []*key.Binding
 
-		controller, err = NewCollection(gui, imageName, analysis, cache)
+		theControls, err = NewCollection(gui, analysis, cache)
 		if err != nil {
 			return
 		}
 
-		// note: order matters when adding elements to the layout
-		lm := layout.NewManager()
-		lm.Add(controller.views.Status, layout.LocationFooter)
-		lm.Add(controller.views.Filter, layout.LocationFooter)
-		lm.Add(compound.NewLayerDetailsCompoundLayout(controller.views.Layer, controller.views.LayerDetails, controller.views.ImageDetails), layout.LocationColumn)
-		lm.Add(controller.views.Tree, layout.LocationColumn)
+		lm := newLayoutManager(theControls)
 
-		// todo: access this more programmatically
-		if debug {
-			lm.Add(controller.views.Debug, layout.LocationColumn)
-		}
 		gui.Cursor = false
-		// g.Mouse = true
-		gui.SetManagerFunc(lm.Layout)
+		//g.Mouse = true
+		gui.SetManagerFunc(lm.layout)
 
 		// var profileObj = profile.Start(profile.CPUProfile, profile.ProfilePath("."), profile.NoShutdownHook)
 		//
@@ -61,7 +52,7 @@ func newApp(gui *gocui.Gui, imageName string, analysis *image.AnalysisResult, ca
 
 		appSingleton = &app{
 			gui:         gui,
-			controllers: controller,
+			controllers: theControls,
 			layout:      lm,
 		}
 
@@ -73,21 +64,13 @@ func newApp(gui *gocui.Gui, imageName string, analysis *image.AnalysisResult, ca
 			},
 			{
 				ConfigKeys: []string{"keybinding.toggle-view"},
-				OnAction:   controller.ToggleView,
+				OnAction:   theControls.ToggleView,
 				Display:    "Switch view",
 			},
 			{
-				Key:      gocui.KeyArrowRight,
-				OnAction: controller.NextPane,
-			},
-			{
-				Key:      gocui.KeyArrowLeft,
-				OnAction: controller.PrevPane,
-			},
-			{
 				ConfigKeys: []string{"keybinding.filter-files"},
-				OnAction:   controller.ToggleFilterView,
-				IsSelected: controller.views.Filter.IsVisible,
+				OnAction:   theControls.ToggleFilterView,
+				IsSelected: theControls.Filter.IsVisible,
 				Display:    "Filter",
 			},
 		}
@@ -97,13 +80,14 @@ func newApp(gui *gocui.Gui, imageName string, analysis *image.AnalysisResult, ca
 			return
 		}
 
-		controller.views.Status.AddHelpKeys(globalHelpKeys...)
+		theControls.Status.AddHelpKeys(globalHelpKeys...)
 
 		// perform the first update and render now that all resources have been loaded
-		err = controller.UpdateAndRender()
+		err = theControls.UpdateAndRender()
 		if err != nil {
 			return
 		}
+
 	})
 
 	return appSingleton, err
@@ -125,8 +109,11 @@ func newApp(gui *gocui.Gui, imageName string, analysis *image.AnalysisResult, ca
 // 	}
 // }
 
+var lastX, lastY int
+
 // quit is the gocui callback invoked when the user hits Ctrl+C
 func (a *app) quit() error {
+
 	// profileObj.Stop()
 	// onExit()
 
@@ -134,22 +121,21 @@ func (a *app) quit() error {
 }
 
 // Run is the UI entrypoint.
-func Run(imageName string, analysis *image.AnalysisResult, treeStack filetree.Comparer) error {
+func Run(analysis *image.AnalysisResult, treeStack filetree.Comparer) error {
 	var err error
 
-	g, err := gocui.NewGui(gocui.OutputNormal, true)
+	if !terminal.IsTerminal(int(os.Stdout.Fd())) {
+		return fmt.Errorf("no tty present, refusing show ui (if running in docker, use -it args)")
+	}
+
+	g, err := gocui.NewGui(gocui.OutputNormal)
 	if err != nil {
 		return err
 	}
 	defer g.Close()
 
-	_, err = newApp(g, imageName, analysis, treeStack)
+	_, err = newApp(g, analysis, treeStack)
 	if err != nil {
-		return err
-	}
-
-	key, mod := gocui.MustParse("Ctrl+Z")
-	if err := g.SetKeybinding("", key, mod, handle_ctrl_z); err != nil {
 		return err
 	}
 

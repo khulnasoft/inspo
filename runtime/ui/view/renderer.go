@@ -5,8 +5,5 @@ type Renderer interface {
 	Update() error
 	Render() error
 	IsVisible() bool
-}
-
-type Helper interface {
 	KeyHelp() string
 }

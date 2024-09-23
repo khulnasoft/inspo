@@ -2,13 +2,9 @@ package runtime
 
 import (
 	"fmt"
-	"os"
-	"time"
-
 	"github.com/dustin/go-humanize"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
-
 	"github.com/khulnasoft/inspo/inspo"
 	"github.com/khulnasoft/inspo/inspo/filetree"
 	"github.com/khulnasoft/inspo/inspo/image"
@@ -16,6 +12,8 @@ import (
 	"github.com/khulnasoft/inspo/runtime/export"
 	"github.com/khulnasoft/inspo/runtime/ui"
 	"github.com/khulnasoft/inspo/utils"
+	"os"
+	"time"
 )
 
 func run(enableUi bool, options Options, imageResolver image.Resolver, events eventChannel, filesystem afero.Fs) {
@@ -86,6 +84,7 @@ func run(enableUi bool, options Options, imageResolver image.Resolver, events ev
 		}
 
 		return
+
 	} else {
 		events.message(utils.TitleFormat("Building cache..."))
 		treeStack := filetree.NewComparer(analysis.RefTrees)
@@ -94,10 +93,8 @@ func run(enableUi bool, options Options, imageResolver image.Resolver, events ev
 			for _, err := range errors {
 				events.message("  " + err.Error())
 			}
-			if !options.IgnoreErrors {
-				events.exitWithError(fmt.Errorf("file tree has path errors (use '--ignore-errors' to attempt to continue)"))
-				return
-			}
+			events.exitWithError(fmt.Errorf("file tree has path errors"))
+			return
 		}
 
 		if enableUi {
@@ -108,7 +105,7 @@ func run(enableUi bool, options Options, imageResolver image.Resolver, events ev
 			// enough sleep will prevent this behavior (todo: remove this hack)
 			time.Sleep(100 * time.Millisecond)
 
-			err = ui.Run(options.Image, analysis, treeStack)
+			err = ui.Run(analysis, treeStack)
 			if err != nil {
 				events.exitWithError(err)
 				return

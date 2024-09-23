@@ -1,15 +1,13 @@
-//go:build linux || darwin
-// +build linux darwin
+// +build linux
 
 package podman
 
 import (
 	"fmt"
+	"github.com/khulnasoft/inspo/utils"
 	"io"
 	"os"
 	"os/exec"
-
-	"github.com/khulnasoft/inspo/utils"
 )
 
 // runPodmanCmd runs a given Podman command in the current tty
@@ -42,7 +40,6 @@ func streamPodmanCmd(args ...string) (error, io.Reader) {
 	if err != nil {
 		return err, nil
 	}
-	defer writer.Close()
 
 	cmd.Stdout = writer
 	cmd.Stderr = os.Stderr

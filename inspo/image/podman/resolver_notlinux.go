@@ -1,11 +1,9 @@
-//go:build !linux && !darwin
-// +build !linux,!darwin
+// +build !linux
 
 package podman
 
 import (
 	"fmt"
-
 	"github.com/khulnasoft/inspo/inspo/image"
 )
 

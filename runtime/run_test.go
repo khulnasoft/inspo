@@ -2,16 +2,14 @@ package runtime
 
 import (
 	"fmt"
-	"os"
-	"testing"
-
 	"github.com/lunixbochs/vtclean"
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
-
 	"github.com/khulnasoft/inspo/inspo"
 	"github.com/khulnasoft/inspo/inspo/image"
 	"github.com/khulnasoft/inspo/inspo/image/docker"
+	"os"
+	"testing"
 )
 
 type defaultResolver struct{}

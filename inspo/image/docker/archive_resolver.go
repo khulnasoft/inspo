@@ -2,9 +2,8 @@ package docker
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/khulnasoft/inspo/inspo/image"
+	"os"
 )
 
 type archiveResolver struct{}

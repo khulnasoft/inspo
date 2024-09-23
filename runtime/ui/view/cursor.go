@@ -2,8 +2,7 @@ package view
 
 import (
 	"errors"
-
-	"github.com/awesome-gocui/gocui"
+	"github.com/jroimartin/gocui"
 )
 
 // CursorDown moves the cursor down in the currently selected gocui pane, scrolling the screen as needed.

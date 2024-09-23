@@ -1,10 +1,10 @@
 package docker
 
 import (
+	"github.com/khulnasoft/inspo/inspo/image"
 	"strings"
 
 	"github.com/khulnasoft/inspo/inspo/filetree"
-	"github.com/khulnasoft/inspo/inspo/image"
 )
 
 // Layer represents a Docker image layer and metadata

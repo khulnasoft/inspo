@@ -2,10 +2,9 @@ package docker
 
 import (
 	"fmt"
+	"github.com/khulnasoft/inspo/utils"
 	"os"
 	"os/exec"
-
-	"github.com/khulnasoft/inspo/utils"
 )
 
 // runDockerCmd runs a given Docker command in the current tty

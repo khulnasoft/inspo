@@ -2,6 +2,9 @@ package viewmodel
 
 import (
 	"bytes"
+	"github.com/khulnasoft/inspo/inspo/image/docker"
+	"github.com/khulnasoft/inspo/runtime/ui/format"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -9,10 +12,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/sergi/go-diff/diffmatchpatch"
-
 	"github.com/khulnasoft/inspo/inspo/filetree"
-	"github.com/khulnasoft/inspo/inspo/image/docker"
-	"github.com/khulnasoft/inspo/runtime/ui/format"
 )
 
 const allowTestDataCapture = false
@@ -31,7 +31,7 @@ func testCaseDataFilePath(name string) string {
 
 func helperLoadBytes(t *testing.T) []byte {
 	path := testCaseDataFilePath(t.Name())
-	theBytes, err := os.ReadFile(path)
+	theBytes, err := ioutil.ReadFile(path)
 	if err != nil {
 		t.Fatalf("unable to load test data ('%s'): %+v", t.Name(), err)
 	}
@@ -44,7 +44,7 @@ func helperCaptureBytes(t *testing.T, data []byte) {
 	}
 
 	path := testCaseDataFilePath(t.Name())
-	err := os.WriteFile(path, data, 0644)
+	err := ioutil.WriteFile(path, data, 0644)
 
 	if err != nil {
 		t.Fatalf("unable to save test data ('%s'): %+v", t.Name(), err)
@@ -55,7 +55,7 @@ func helperCheckDiff(t *testing.T, expected, actual []byte) {
 	if !bytes.Equal(expected, actual) {
 		dmp := diffmatchpatch.New()
 		diffs := dmp.DiffMain(string(expected), string(actual), true)
-		t.Errorf("Diff mismatch:\n%s", dmp.DiffPrettyText(diffs))
+		t.Errorf(dmp.DiffPrettyText(diffs))
 		t.Errorf("%s: bytes mismatch", t.Name())
 	}
 }
@@ -73,7 +73,7 @@ func assertTestData(t *testing.T, actualBytes []byte) {
 	helperCheckDiff(t, expectedBytes, actualBytes)
 }
 
-func initializeTestViewModel(t *testing.T) *FileTreeViewModel {
+func initializeTestViewModel(t *testing.T) *FileTree {
 	result := docker.TestAnalysisFromArchive(t, "../../../.data/test-docker-image.tar")
 
 	cache := filetree.NewComparer(result.RefTrees)
@@ -98,7 +98,7 @@ func initializeTestViewModel(t *testing.T) *FileTreeViewModel {
 	return vm
 }
 
-func runTestCase(t *testing.T, vm *FileTreeViewModel, width, height int, filterRegex *regexp.Regexp) {
+func runTestCase(t *testing.T, vm *FileTree, width, height int, filterRegex *regexp.Regexp) {
 	err := vm.Update(filterRegex, width, height)
 	if err != nil {
 		t.Errorf("failed to update viewmodel: %v", err)
