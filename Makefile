@@ -18,7 +18,7 @@ ci-static-analysis:
 	@! gofmt -s -l . 2>&1 | grep -vE '^\.git/' | grep -vE '^\.cache/'
 	golangci-lint run
 
-ci-install-go-tools:
+ci-install-:
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sudo sh -s -- -b /usr/local/bin/ latest
 
 ci-install-ci-tools:
@@ -65,7 +65,7 @@ ci-test-deb-package-install:
 					tar -vxzf - docker/docker --strip-component=1 && \
 					mv docker /usr/local/bin/ &&\
 				docker version && \
-				apt install ./dist/inspo_*_linux_amd64.deb -y && \
+go-tools				apt install ./dist/inspo_*_linux_amd64.deb -y && \
 				inspo --version && \
 				inspo '${TEST_IMAGE}' --ci \
 			"
@@ -115,7 +115,7 @@ run-podman: build
 	$(BUILD_PATH) localhost/inspo-example:latest --engine podman
 
 run-podman-large: build
-	$(BUILD_PATH) docker.io/amir20/clashleaders:latest --engine podman
+	$(BUILD_PATH)
 
 run-ci: build
 	CI=true $(BUILD_PATH) inspo-example:latest --ci-config .data/.inspo-ci
