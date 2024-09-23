@@ -274,7 +274,7 @@ ci-check:
 ## Cleanup targets #################################
 
 .PHONY: clean
-clean: clean-dist clean-snapshot  ## Remove previous builds, result reports, and test cache
+clean: clean-dist clean-snapshot clean-dist clean-changelog ## Remove previous builds, result reports, and test cache
 
 .PHONY: clean-snapshot
 clean-snapshot:
