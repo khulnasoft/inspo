@@ -166,7 +166,7 @@ jobs:
         run: make ci-docker-login
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
 
       - name: Publish GitHub release
         run: make ci-release

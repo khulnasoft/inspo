@@ -25,7 +25,7 @@ ci-install-ci-tools:
 	curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | sudo sh -s -- -b /usr/local/bin/ "v0.122.0"
 
 ci-docker-login:
-	echo '${DOCKER_PASSWORD}' | docker login -u '${DOCKER_USERNAME}' --password-stdin '${PRODUCTION_REGISTRY}'
+	echo '${DOCKER_TOKEN}' | docker login -u '${DOCKER_USERNAME}' --password-stdin '${PRODUCTION_REGISTRY}'
 
 ci-docker-logout:
 	docker logout '${PRODUCTION_REGISTRY}'
