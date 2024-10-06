@@ -1,3 +1,6 @@
+-rwxr-xr-x         0:0        0 B  │   ├── bzcat → bin/[
+-rwxr-xr-x         0:0        0 B  │   ├── bzip2 → bin/[
+-rwxr-xr-x         0:0        0 B  │   ├── cal → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── cat → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── chat → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── chattr → bin/[
@@ -5,7 +8,4 @@
 -rwxr-xr-x         0:0        0 B  │   ├── chmod → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── chown → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── chpasswd → bin/[
--rwxr-xr-x         0:0        0 B  │   ├── chpst → bin/[
--rwxr-xr-x         0:0        0 B  │   ├── chroot → bin/[
--rwxr-xr-x         0:0        0 B  │   ├── chrt → bin/[
 

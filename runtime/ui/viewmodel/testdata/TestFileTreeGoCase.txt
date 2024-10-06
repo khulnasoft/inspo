@@ -1,5 +1,5 @@
 drwxr-xr-x         0:0     1.1 MB  ├── bin
--rwxr-xr-x         0:0     1.1 MB  │   ├── [
+-rwxr-xr-x         0:0     1.0 MB  │   ├── [
 -rwxr-xr-x         0:0        0 B  │   ├── [[ → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── acpid → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── add-shell → bin/[
@@ -10,10 +10,13 @@ drwxr-xr-x         0:0     1.1 MB  ├── bin
 -rwxr-xr-x         0:0        0 B  │   ├── arch → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── arp → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── arping → bin/[
+-rwxr-xr-x         0:0        0 B  │   ├── ascii → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── ash → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── awk → bin/[
+-rwxr-xr-x         0:0        0 B  │   ├── base32 → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── base64 → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── basename → bin/[
+-rwxr-xr-x         0:0        0 B  │   ├── bc → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── beep → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── blkdiscard → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── blkid → bin/[
@@ -43,6 +46,7 @@ drwxr-xr-x         0:0     1.1 MB  ├── bin
 -rwxr-xr-x         0:0        0 B  │   ├── conspy → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── cp → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── cpio → bin/[
+-rwxr-xr-x         0:0        0 B  │   ├── crc32 → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── crond → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── crontab → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── cryptpw → bin/[
@@ -106,7 +110,8 @@ drwxr-xr-x         0:0     1.1 MB  ├── bin
 -rwxr-xr-x         0:0        0 B  │   ├── ftpget → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── ftpput → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── fuser → bin/[
--rwxr-xr-x         0:0      78 kB  │   ├── getconf
+-rwxr-xr-x         0:0      27 kB  │   ├── getconf
+-rwxr-xr-x         0:0        0 B  │   ├── getfattr → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── getopt → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── getty → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── grep → bin/[
@@ -128,6 +133,7 @@ drwxr-xr-x         0:0     1.1 MB  ├── bin
 -rwxr-xr-x         0:0        0 B  │   ├── i2cdump → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── i2cget → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── i2cset → bin/[
+-rwxr-xr-x         0:0        0 B  │   ├── i2ctransfer → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── id → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── ifconfig → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── ifdown → bin/[
@@ -189,6 +195,7 @@ drwxr-xr-x         0:0     1.1 MB  ├── bin
 -rwxr-xr-x         0:0        0 B  │   ├── mdev → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── mesg → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── microcom → bin/[
+-rwxr-xr-x         0:0        0 B  │   ├── mim → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── mkdir → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── mkdosfs → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── mke2fs → bin/[
@@ -218,11 +225,11 @@ drwxr-xr-x         0:0     1.1 MB  ├── bin
 -rwxr-xr-x         0:0        0 B  │   ├── nl → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── nmeter → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── nohup → bin/[
+-rwxr-xr-x         0:0        0 B  │   ├── nologin → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── nproc → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── nsenter → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── nslookup → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── ntpd → bin/[
--rwxr-xr-x         0:0        0 B  │   ├── nuke → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── od → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── openvt → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── partprobe → bin/[
@@ -278,6 +285,7 @@ drwxr-xr-x         0:0     1.1 MB  ├── bin
 -rwxr-xr-x         0:0        0 B  │   ├── script → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── scriptreplay → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── sed → bin/[
+-rwxr-xr-x         0:0        0 B  │   ├── seedrng → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── sendmail → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── seq → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── setarch → bin/[
@@ -341,8 +349,11 @@ drwxr-xr-x         0:0     1.1 MB  ├── bin
 -rwxr-xr-x         0:0        0 B  │   ├── tr → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── traceroute → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── traceroute6 → bin/[
+-rwxr-xr-x         0:0        0 B  │   ├── tree → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── true → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── truncate → bin/[
+-rwxr-xr-x         0:0        0 B  │   ├── ts → bin/[
+-rwxr-xr-x         0:0        0 B  │   ├── tsort → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── tty → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── ttysize → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── tunctl → bin/[
@@ -354,6 +365,7 @@ drwxr-xr-x         0:0     1.1 MB  ├── bin
 -rwxr-xr-x         0:0        0 B  │   ├── ubirsvol → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── ubiupdatevol → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── udhcpc → bin/[
+-rwxr-xr-x         0:0        0 B  │   ├── udhcpc6 → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── udhcpd → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── udpsvd → bin/[
 -rwxr-xr-x         0:0        0 B  │   ├── uevent → bin/[
@@ -395,19 +407,33 @@ drwxr-xr-x         0:0     1.1 MB  ├── bin
 -rwxr-xr-x         0:0        0 B  │   └── zcip → bin/[
 drwxr-xr-x         0:0        0 B  ├── dev
 drwxr-xr-x         0:0     1.4 kB  ├── etc
--rw-rw-r--         0:0      306 B  │   ├── group
+-rw-r--r--         0:0      306 B  │   ├── group
 -rw-r--r--         0:0      114 B  │   ├── localtime
 drwxr-xr-x         0:0        0 B  │   ├── network
 drwxr-xr-x         0:0        0 B  │   │   ├── if-down.d
 drwxr-xr-x         0:0        0 B  │   │   ├── if-post-down.d
 drwxr-xr-x         0:0        0 B  │   │   ├── if-pre-up.d
 drwxr-xr-x         0:0        0 B  │   │   └── if-up.d
+-rw-r--r--         0:0      494 B  │   ├── nsswitch.conf
 -rw-r--r--         0:0      340 B  │   ├── passwd
 -rw-------         0:0      136 B  │   └── shadow
 drwxr-xr-x 65534:65534        0 B  ├── home
+drwxr-xr-x         0:0     3.2 MB  ├── lib
+-rwxr-xr-x         0:0     211 kB  │   ├── ld-linux-x86-64.so.2
+-rwxr-xr-x         0:0     1.9 MB  │   ├── libc.so.6
+-rw-r--r--         0:0     908 kB  │   ├── libm.so.6
+-rw-r--r--         0:0      40 kB  │   ├── libnss_compat.so.2
+-rw-r--r--         0:0      14 kB  │   ├── libnss_dns.so.2
+-rw-r--r--         0:0      14 kB  │   ├── libnss_files.so.2
+-rw-r--r--         0:0      27 kB  │   ├── libnss_hesiod.so.2
+-rw-r--r--         0:0      14 kB  │   ├── libpthread.so.0
+-rw-r--r--         0:0      60 kB  │   └── libresolv.so.2
+-rwxrwxrwx         0:0        0 B  ├── lib64 → lib
 drwx------         0:0        0 B  ├── root
 drwxrwxrwx         0:0        0 B  ├── tmp
 drwxr-xr-x         0:0        0 B  ├── usr
+drwxr-xr-x         0:0        0 B  │   ├── bin
+-rwxrwxrwx         0:0        0 B  │   │   └── env → ../../bin/env
 drwxr-xr-x         1:1        0 B  │   └── sbin
 drwxr-xr-x         0:0        0 B  └── var
 drwxr-xr-x         0:0        0 B      ├── spool

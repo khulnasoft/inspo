@@ -10,13 +10,13 @@
 │   ├── arch → bin/[
 │   ├── arp → bin/[
 │   ├── arping → bin/[
+│   ├── ascii → bin/[
 │   ├── ash → bin/[
 │   ├── awk → bin/[
+│   ├── base32 → bin/[
 │   ├── base64 → bin/[
 │   ├── basename → bin/[
+│   ├── bc → bin/[
 │   ├── beep → bin/[
 │   ├── blkdiscard → bin/[
-│   ├── blkid → bin/[
-│   ├── blockdev → bin/[
-│   ├── bootchartd → bin/[
 

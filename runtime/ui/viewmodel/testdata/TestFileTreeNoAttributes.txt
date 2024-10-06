@@ -10,10 +10,13 @@
 │   ├── arch → bin/[
 │   ├── arp → bin/[
 │   ├── arping → bin/[
+│   ├── ascii → bin/[
 │   ├── ash → bin/[
 │   ├── awk → bin/[
+│   ├── base32 → bin/[
 │   ├── base64 → bin/[
 │   ├── basename → bin/[
+│   ├── bc → bin/[
 │   ├── beep → bin/[
 │   ├── blkdiscard → bin/[
 │   ├── blkid → bin/[
@@ -43,6 +46,7 @@
 │   ├── conspy → bin/[
 │   ├── cp → bin/[
 │   ├── cpio → bin/[
+│   ├── crc32 → bin/[
 │   ├── crond → bin/[
 │   ├── crontab → bin/[
 │   ├── cryptpw → bin/[
@@ -107,6 +111,7 @@
 │   ├── ftpput → bin/[
 │   ├── fuser → bin/[
 │   ├── getconf
+│   ├── getfattr → bin/[
 │   ├── getopt → bin/[
 │   ├── getty → bin/[
 │   ├── grep → bin/[
@@ -128,6 +133,7 @@
 │   ├── i2cdump → bin/[
 │   ├── i2cget → bin/[
 │   ├── i2cset → bin/[
+│   ├── i2ctransfer → bin/[
 │   ├── id → bin/[
 │   ├── ifconfig → bin/[
 │   ├── ifdown → bin/[
@@ -189,6 +195,7 @@
 │   ├── mdev → bin/[
 │   ├── mesg → bin/[
 │   ├── microcom → bin/[
+│   ├── mim → bin/[
 │   ├── mkdir → bin/[
 │   ├── mkdosfs → bin/[
 │   ├── mke2fs → bin/[
@@ -218,11 +225,11 @@
 │   ├── nl → bin/[
 │   ├── nmeter → bin/[
 │   ├── nohup → bin/[
+│   ├── nologin → bin/[
 │   ├── nproc → bin/[
 │   ├── nsenter → bin/[
 │   ├── nslookup → bin/[
 │   ├── ntpd → bin/[
-│   ├── nuke → bin/[
 │   ├── od → bin/[
 │   ├── openvt → bin/[
 │   ├── partprobe → bin/[
@@ -278,6 +285,7 @@
 │   ├── script → bin/[
 │   ├── scriptreplay → bin/[
 │   ├── sed → bin/[
+│   ├── seedrng → bin/[
 │   ├── sendmail → bin/[
 │   ├── seq → bin/[
 │   ├── setarch → bin/[
@@ -341,8 +349,11 @@
 │   ├── tr → bin/[
 │   ├── traceroute → bin/[
 │   ├── traceroute6 → bin/[
+│   ├── tree → bin/[
 │   ├── true → bin/[
 │   ├── truncate → bin/[
+│   ├── ts → bin/[
+│   ├── tsort → bin/[
 │   ├── tty → bin/[
 │   ├── ttysize → bin/[
 │   ├── tunctl → bin/[
@@ -354,6 +365,7 @@
 │   ├── ubirsvol → bin/[
 │   ├── ubiupdatevol → bin/[
 │   ├── udhcpc → bin/[
+│   ├── udhcpc6 → bin/[
 │   ├── udhcpd → bin/[
 │   ├── udpsvd → bin/[
 │   ├── uevent → bin/[
@@ -402,12 +414,26 @@
 │   │   ├── if-post-down.d
 │   │   ├── if-pre-up.d
 │   │   └── if-up.d
+│   ├── nsswitch.conf
 │   ├── passwd
 │   └── shadow
 ├── home
+├── lib
+│   ├── ld-linux-x86-64.so.2
+│   ├── libc.so.6
+│   ├── libm.so.6
+│   ├── libnss_compat.so.2
+│   ├── libnss_dns.so.2
+│   ├── libnss_files.so.2
+│   ├── libnss_hesiod.so.2
+│   ├── libpthread.so.0
+│   └── libresolv.so.2
+├── lib64 → lib
 ├── root
 ├── tmp
 ├── usr
+│   ├── bin
+│   │   └── env → ../../bin/env
 │   └── sbin
 └── var
     ├── spool

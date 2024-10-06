@@ -2,6 +2,8 @@ drwxr-xr-x         0:0     1.1 MB  ├─⊕ bin
 drwxr-xr-x         0:0        0 B  ├── dev
 drwxr-xr-x         0:0     1.4 kB  ├─⊕ etc
 drwxr-xr-x 65534:65534        0 B  ├── home
+drwxr-xr-x         0:0     3.2 MB  ├─⊕ lib
+-rwxrwxrwx         0:0        0 B  ├── lib64 → lib
 drwx------         0:0        0 B  ├── root
 drwxrwxrwx         0:0        0 B  ├── tmp
 drwxr-xr-x         0:0        0 B  ├─⊕ usr

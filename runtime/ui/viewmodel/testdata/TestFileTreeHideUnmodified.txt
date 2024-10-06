@@ -7,5 +7,6 @@ drwxr-xr-x         0:0        0 B  │   │   │   └── nested
 -rw-r--r--         0:0     1.6 kB  │   │   ├── somefile2.txt
 -rw-r--r--         0:0     1.6 kB  │   │   └── somefile3.txt
 -rw-r--r--         0:0     1.6 kB  │   └── saved.txt
--rw-rw-rw-         0:0     1.6 kB ├── somefile.txt
+-rw-rw-rw-         0:0     1.6 kB  ├── somefile.txt
 drwxr-xr-x         0:0        0 B  └── sys
+
