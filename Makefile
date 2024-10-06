@@ -7,7 +7,7 @@ TEST_IMAGE = busybox:latest
 
 # Tool versions #################################
 GOLANG_CI_VERSION = v1.52.2
-GOLICENSES_VERSION = v5.0.1
+GOBOUNCER_VERSION = v0.4.0
 GORELEASER_VERSION = v1.19.1
 GOSIMPORTS_VERSION = v0.3.8
 CHRONICLE_VERSION = v0.6.0
@@ -77,6 +77,7 @@ test: unit ## Run all tests (currently unit and cli tests)
 $(TEMP_DIR):
 	mkdir -p $(TEMP_DIR)
 
+
 ## Bootstrapping targets #################################
 
 .PHONY: bootstrap-tools
@@ -84,7 +85,7 @@ bootstrap-tools: $(TEMP_DIR)
 	$(call title,Bootstrapping tools)
 	curl -sSfL https://raw.githubusercontent.com/anchore/chronicle/main/install.sh | sh -s -- -b $(TEMP_DIR)/ $(CHRONICLE_VERSION)
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(TEMP_DIR)/ $(GOLANG_CI_VERSION)
-	curl -sSfL https://raw.githubusercontent.com/khulnasoft/go-licenses/master/golicenses.sh | sh -s -- -b $(TEMP_DIR)/ $(GOLICENSES_VERSION)
+	curl -sSfL https://raw.githubusercontent.com/khulnasoft/go-licenses/master/golicenses.sh | sh -s -- -b $(TEMP_DIR)/ $(GOBOUNCER_VERSION)
 	GOBIN="$(realpath $(TEMP_DIR))" go install github.com/goreleaser/goreleaser@$(GORELEASER_VERSION)
 	GOBIN="$(realpath $(TEMP_DIR))" go install github.com/rinchsan/gosimports/cmd/gosimports@$(GOSIMPORTS_VERSION)
 	GOBIN="$(realpath $(TEMP_DIR))" go install github.com/charmbracelet/glow@$(GLOW_VERSION)
@@ -96,6 +97,31 @@ bootstrap-go:
 
 .PHONY: bootstrap
 bootstrap: bootstrap-go bootstrap-tools ## Download and install all go dependencies (+ prep tooling in the ./tmp dir)
+
+
+## Development targets ###################################
+
+run: build
+	$(BUILD_PATH) build -t inspo-example:latest -f .data/Dockerfile.example .
+
+run-large: build
+	$(BUILD_PATH) amir20/clashleaders:latest
+
+run-podman: build
+	podman build -t inspo-example:latest -f .data/Dockerfile.example .
+	$(BUILD_PATH) localhost/inspo-example:latest --engine podman
+
+run-podman-large: build
+	$(BUILD_PATH) docker.io/amir20/clashleaders:latest --engine podman
+
+run-ci: build
+	CI=true $(BUILD_PATH) inspo-example:latest --ci-config .data/.inspo-ci
+
+dev:
+	docker run -ti --rm -v $(PWD):/app -w /app -v inspo-pkg:/go/pkg/ golang:1.13 bash
+
+build: gofmt
+	go build -o $(BUILD_PATH)
 
 .PHONY: generate-test-data
 generate-test-data:
@@ -274,7 +300,7 @@ ci-check:
 ## Cleanup targets #################################
 
 .PHONY: clean
-clean: clean-dist clean-snapshot clean-dist clean-changelog ## Remove previous builds, result reports, and test cache
+clean: clean-dist clean-snapshot  ## Remove previous builds, result reports, and test cache
 
 .PHONY: clean-snapshot
 clean-snapshot:
