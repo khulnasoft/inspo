@@ -14,6 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Bootstrap environment
+        run: make bootstrap
+
       - name: Run format
         run: make format
       
