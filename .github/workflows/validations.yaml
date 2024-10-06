@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - develop
+      - fix/lint
   pull_request:
 
 jobs:
@@ -17,6 +17,9 @@ jobs:
 
       - name: Bootstrap environment
         uses: ./.github/actions/bootstrap
+
+      - name: Lint-fix
+        run: make lint-fix
 
       - name: Run static analysis
         run: make static-analysis
