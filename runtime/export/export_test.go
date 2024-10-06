@@ -119,7 +119,7 @@ func Test_Export(t *testing.T) {
     }
   ],
   "image": {
-    "sizeBytes": 4263742,
+    "sizeBytes": 4288144,
     "inefficientBytes": 35,
     "efficiencyScore": 0.98499995074212176506634184309,
     "fileReference": [
