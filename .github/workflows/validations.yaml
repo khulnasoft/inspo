@@ -3,10 +3,25 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - develop
+      - fix/lint
   pull_request:
 
 jobs:
+
+  Lint-fix:
+    name: "Lint fix"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Bootstrap environment
+        run: make bootstrap
+
+      - name: Run format
+        run: make format
+      
+      - name: Run lint fix
+        run: make lint-fix
 
   Static-Analysis:
     # Note: changing this job name requires making the same update in the .github/workflows/release.yaml pipeline
