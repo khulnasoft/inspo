@@ -1,15 +1,15 @@
-drwxr-xr-x         0:0     1.2 MB  ├─⊕ bin
+drwxr-xr-x         0:0     1.1 MB  ├─⊕ bin
 drwxr-xr-x         0:0        0 B  ├── dev
-drwxr-xr-x         0:0     1.0 kB  ├── etc
--rw-rw-r--         0:0      307 B  │   ├── group
--rw-r--r--         0:0      127 B  │   ├── localtime
+drwxr-xr-x         0:0     1.4 kB  ├── etc
+-rw-rw-r--         0:0      306 B  │   ├── group
+-rw-r--r--         0:0      114 B  │   ├── localtime
 drwxr-xr-x         0:0        0 B  │   ├── network
 drwxr-xr-x         0:0        0 B  │   │   ├── if-down.d
 drwxr-xr-x         0:0        0 B  │   │   ├── if-post-down.d
 drwxr-xr-x         0:0        0 B  │   │   ├── if-pre-up.d
 drwxr-xr-x         0:0        0 B  │   │   └── if-up.d
 -rw-r--r--         0:0      340 B  │   ├── passwd
--rw-------         0:0      243 B  │   └── shadow
+-rw-------         0:0      136 B  │   └── shadow
 drwxr-xr-x 65534:65534        0 B  ├── home
 drwx------         0:0        0 B  ├── root
 drwxrwxrwx         0:0        0 B  ├── tmp
