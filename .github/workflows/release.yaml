@@ -64,7 +64,6 @@ jobs:
           checkName: "Acceptance tests (Windows)"
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
-
       - name: Quality gate
         if: steps.static-analysis.outputs.conclusion != 'success' || steps.unit.outputs.conclusion != 'success' || steps.acceptance-linux.outputs.conclusion != 'success' || steps.acceptance-mac.outputs.conclusion != 'success' || steps.acceptance-windows.outputs.conclusion != 'success'
         run: |
@@ -83,7 +82,6 @@ jobs:
       # for tagging
       contents: write
     steps:
-
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
