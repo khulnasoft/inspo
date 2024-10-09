@@ -113,7 +113,7 @@ func initConfig() {
 		os.Exit(1)
 	}
 
-	viper.SetEnvPrefix("DIVE")
+	viper.SetEnvPrefix("INSPO")
 	// replace all - with _ when looking for matching environment variables
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	viper.AutomaticEnv()
@@ -164,7 +164,7 @@ func initLogging() {
 	}
 
 	log.SetLevel(level)
-	log.Debug("Starting Dive...")
+	log.Debug("Starting Inspo...")
 	log.Debugf("config filepath: %s", viper.ConfigFileUsed())
 	for k, v := range viper.AllSettings() {
 		log.Debug("config value: ", k, " : ", v)
