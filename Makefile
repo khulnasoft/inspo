@@ -101,27 +101,27 @@ bootstrap: bootstrap-go bootstrap-tools ## Download and install all go dependenc
 
 ## Development targets ###################################
 
-run: build
-	$(BUILD_PATH) build -t inspo-example:latest -f .data/Dockerfile.example .
-
-run-large: build
-	$(BUILD_PATH) amir20/clashleaders:latest
-
-run-podman: build
-	podman build -t inspo-example:latest -f .data/Dockerfile.example .
-	$(BUILD_PATH) localhost/inspo-example:latest --engine podman
-
-run-podman-large: build
-	$(BUILD_PATH) docker.io/amir20/clashleaders:latest --engine podman
-
-run-ci: build
-	CI=true $(BUILD_PATH) inspo-example:latest --ci-config .data/.inspo-ci
-
-dev:
-	docker run -ti --rm -v $(PWD):/app -w /app -v inspo-pkg:/go/pkg/ golang:1.13 bash
-
-build: gofmt
-	go build -o $(BUILD_PATH)
+#run: build
+#	$(BUILD_PATH) build -t inspo-example:latest -f .data/Dockerfile.example .
+#
+#run-large: build
+#	$(BUILD_PATH) amir20/clashleaders:latest
+#
+#run-podman: build
+#	podman build -t inspo-example:latest -f .data/Dockerfile.example .
+#	$(BUILD_PATH) localhost/inspo-example:latest --engine podman
+#
+#run-podman-large: build
+#	$(BUILD_PATH) docker.io/amir20/clashleaders:latest --engine podman
+#
+#run-ci: build
+#	CI=true $(BUILD_PATH) inspo-example:latest --ci-config .data/.inspo-ci
+#
+#dev:
+#	docker run -ti --rm -v $(PWD):/app -w /app -v inspo-pkg:/go/pkg/ golang:1.13 bash
+#
+#build: gofmt
+#	go build -o $(BUILD_PATH)
 
 .PHONY: generate-test-data
 generate-test-data:
@@ -282,7 +282,7 @@ $(CHANGELOG):
 release:  ## Cut a new release
 	@.github/scripts/trigger-release.sh
 
-.PHONY: ci-release
+.PHONY: release
 ci-release: ci-check clean-dist $(CHANGELOG)
 	$(call title,Publishing release artifacts)
 
@@ -320,3 +320,4 @@ clean-changelog:
 .PHONY: help
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "$(BOLD)$(CYAN)%-25s$(RESET)%s\n", $$1, $$2}'
+

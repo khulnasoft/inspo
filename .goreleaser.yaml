@@ -43,8 +43,7 @@ nfpms:
       - deb
 
 dockers:
-  -
-    ids:
+  - ids:
       - inspo
     dockerfile: Dockerfile
     # todo: on 1.0 remove 'v' prefix
