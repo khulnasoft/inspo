@@ -106,9 +106,9 @@ With valid `source` options as such:
 Using debs:
 
 ```bash
-DIVE_VERSION=$(curl -sL "https://api.github.com/repos/khulnasoft/inspo/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
-curl -OL https://github.com/khulnasoft/inspo/releases/download/v${DIVE_VERSION}/inspo_${DIVE_VERSION}_linux_amd64.deb
-sudo apt install ./inspo_${DIVE_VERSION}_linux_amd64.deb
+INSPO_VERSION=$(curl -sL "https://api.github.com/repos/khulnasoft/inspo/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+curl -OL https://github.com/khulnasoft/inspo/releases/download/v${INSPO_VERSION}/inspo_${INSPO_VERSION}_linux_amd64.deb
+sudo apt install ./inspo_${INSPO_VERSION}_linux_amd64.deb
 ```
 
 Using snap:
@@ -123,9 +123,9 @@ sudo snap connect inspo:docker-daemon docker:docker-daemon
 **RHEL/Centos**
 
 ```bash
-DIVE_VERSION=$(curl -sL "https://api.github.com/repos/khulnasoft/inspo/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
-curl -OL https://github.com/khulnasoft/inspo/releases/download/v${DIVE_VERSION}/inspo_${DIVE_VERSION}_linux_amd64.rpm
-rpm -i inspo_${DIVE_VERSION}_linux_amd64.rpm
+INSPO_VERSION=$(curl -sL "https://api.github.com/repos/khulnasoft/inspo/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+curl -OL https://github.com/khulnasoft/inspo/releases/download/v${INSPO_VERSION}/inspo_${INSPO_VERSION}_linux_amd64.rpm
+rpm -i inspo_${INSPO_VERSION}_linux_amd64.rpm
 ```
 
 **Arch Linux**
